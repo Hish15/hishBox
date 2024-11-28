@@ -15,6 +15,21 @@ include(${CMAKE_BINARY_DIR}/cmake/CPM.cmake)
 
 # Add dependencies
 
+CPMAddPackage(
+    NAME pn532
+    GITHUB_REPOSITORY soonuse/pn532-lib
+    GIT_TAG f25b40151f7940af89a75a95e11eb33e4b14581b
+    DOWNLOAD_ONLY YES
+)
+
+if(pn532_ADDED)
+add_library(pn532 STATIC  ${pn532_SOURCE_DIR}/pn532.c
+                        ${pn532_SOURCE_DIR}/pn532_rpi.c)
+
+target_include_directories(pn532  PUBLIC ${pn532_SOURCE_DIR})
+
+endif()
 
 # Add the executable
 add_executable(HishBox src/main.cpp)
+target_link_libraries(HishBox PRIVATE pn532 -lwiringPi)
