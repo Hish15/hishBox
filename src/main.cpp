@@ -12,6 +12,7 @@ extern "C"{
 int main(int argc, char** argv) {
     uint8_t buff[255];
     uint8_t uid[MIFARE_UID_MAX_LENGTH];
+    uint32_t pn532_error = PN532_ERROR_NONE;
     int32_t uid_len = 0;
     printf("Hello!\r\n");
     PN532 pn532;
@@ -31,14 +32,28 @@ int main(int argc, char** argv) {
         uid_len = PN532_ReadPassiveTarget(&pn532, uid, PN532_MIFARE_ISO14443A, 1000);
         if (uid_len == PN532_STATUS_ERROR) {
             printf(".");
-            fflush(stdout);
         } else {
             printf("Found card with UID: ");
             for (uint8_t i = 0; i < uid_len; i++) {
-                printf("%02x ", uid[i]);
+                printf("%i", uid[i]);
             }
             printf("\r\n");
             break;
         }
+    }
+    printf("Reading blocks...\r\n");
+    for (uint8_t block_number = 0; block_number < 135; block_number++) {
+        pn532_error = PN532_Ntag2xxReadBlock(&pn532, buff, block_number);
+        if (pn532_error != PN532_ERROR_NONE) {
+            break;
+        }
+        //printf("%d: ", block_number);
+        for (uint8_t i = 0; i < 4; i++) {
+            printf("%c ", buff[i]);
+        }
+        //printf("\r\n");
+    }
+    if (pn532_error) {
+        printf("Error: 0x%02x\r\n", pn532_error);
     }
 }
