@@ -15,6 +15,7 @@ extern "C"{
 #include <iostream>
 #include <optional>
 #include <regex>
+#include <filesystem>
 #include <span>
 #include <string>
 #include <vector>
@@ -124,6 +125,24 @@ std::string get_youtube_id(std::string url)
     return "";
 }
 
+std::string get_matching_path(std::string_view directory, std::string_view pattern)
+{
+    // directory_iterator can be iterated using a range-for loop
+    for (auto const& dir_entry : std::filesystem::directory_iterator{directory}) 
+    {
+        const bool is_file = std::filesystem::is_regular_file(dir_entry);
+        if(is_file == false)
+        {
+            continue;
+        }
+        const std::string tested_file = dir_entry.path().string();
+        if(dir_entry.path().string().contains(pattern))
+            return tested_file;
+    }
+    return "";
+    
+}
+
 int main(int argc, char** argv) {
     uint8_t buff[255];
     uint8_t uid[MIFARE_UID_MAX_LENGTH];
@@ -180,11 +199,20 @@ int main(int argc, char** argv) {
     }
     auto payload = NfcFrame::get_payload(raw_frame);
     std::string url(payload.begin(), payload.end());
-    if(get_youtube_id(url).empty() == false)
+    const auto id = get_youtube_id(url);
+    if(id.empty() == false)
     {
-	    std::string download_cmd = fmt::format("docker run --rm -it -v \".:/downloads:rw\" ghcr.io/jauderho/yt-dlp:latest {} --extract-audio --audio-format wav",url );
-	    std::system(download_cmd.c_str());
-	    std::system("mplayer *.wav");
+	    const auto matching_path = get_matching_path("youtube",id);
+	    if(matching_path.empty())
+	    {
+		    std::string download_cmd = fmt::format("docker run --rm -it -v \"/home/hish/hishBox/youtube/:/downloads:rw\" ghcr.io/jauderho/yt-dlp:latest {} --extract-audio --audio-format wav",url );
+
+		    std::system(download_cmd.c_str());
+	    }
+	    const auto matching_path2 = get_matching_path("youtube", id);
+	    const auto run_cmd = fmt::format("mplayer \"{}\"", matching_path2);
+	    spdlog::info(run_cmd);
+	    std::system(run_cmd.c_str());
     }
     else
     {
