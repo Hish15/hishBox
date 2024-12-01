@@ -13,10 +13,11 @@ extern "C"{
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <optional>
+#include <regex>
+#include <span>
 #include <string>
 #include <vector>
-#include <span>
-#include <optional>
 /*
 
 +-------------------------+----------------------------------------------------------------
@@ -105,6 +106,23 @@ public:
 };
 #pragma pack(pop)
 
+std::string get_youtube_id(std::string url)
+{
+    std::smatch m;
+    if(std::regex_search(url, m, std::regex("youtu\\.?be")) == false)
+    {
+        return "";
+    }
+    if(std::regex_search(url, m, std::regex("v=([a-zA-Z0-9]+)")))
+    {
+        return m[1];
+    }
+    else if(std::regex_search(url, m, std::regex("//.[^/]+/([a-zA-Z]+)"))) 
+    {
+        return m[1];
+    }
+    return "";
+}
 
 int main(int argc, char** argv) {
     uint8_t buff[255];
@@ -161,7 +179,16 @@ int main(int argc, char** argv) {
         printf("Error: 0x%02x\r\n", pn532_error);
     }
     auto payload = NfcFrame::get_payload(raw_frame);
-    std::string a(payload.begin(), payload.end());
-    std::cout << a << std::endl;
+    std::string url(payload.begin(), payload.end());
+    if(get_youtube_id(url).empty() == false)
+    {
+	    std::string download_cmd = fmt::format("docker run --rm -it -v \".:/downloads:rw\" ghcr.io/jauderho/yt-dlp:latest {} --extract-audio --audio-format wav",url );
+	    std::system(download_cmd.c_str());
+	    std::system("mplayer *.wav");
+    }
+    else
+    {
+	spdlog::error("The URL is not handled yet");
+    }
     return 0;
 }

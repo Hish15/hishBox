@@ -15,6 +15,7 @@ include(${CMAKE_BINARY_DIR}/cmake/CPM.cmake)
 
 # Add dependencies
 CPMAddPackage("gh:gabime/spdlog@1.8.2")
+CPMAddPackage("gh:fmtlib/fmt#7.1.3")
 CPMAddPackage(
     NAME pn532
     GITHUB_REPOSITORY soonuse/pn532-lib
@@ -37,4 +38,5 @@ set_target_properties(HishBox PROPERTIES CXX_STANDARD 23 CXX_STANDARD_REQUIRED Y
 target_link_libraries(HishBox PRIVATE
                                         pn532
                                         spdlog
+                                        fmt
                                         -lwiringPi)
