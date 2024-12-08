@@ -34,6 +34,10 @@ endif()
 
 # Add the executable
 add_executable(HishBox src/main.cpp)
+target_sources(HishBox PRIVATE	src/nfc_reader.cpp
+				src/nfc_reader.hpp
+				src/nfc_frame.hpp
+	)
 set_target_properties(HishBox PROPERTIES CXX_STANDARD 23 CXX_STANDARD_REQUIRED YES)
 target_link_libraries(HishBox PRIVATE
                                         pn532
