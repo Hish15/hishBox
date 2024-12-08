@@ -40,3 +40,4 @@ target_link_libraries(HishBox PRIVATE
                                         spdlog
                                         fmt
                                         -lwiringPi)
+target_include_directories(HishBox PRIVATE src)
