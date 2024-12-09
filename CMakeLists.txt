@@ -22,7 +22,7 @@ CPMAddPackage(
     GIT_TAG f25b40151f7940af89a75a95e11eb33e4b14581b
     DOWNLOAD_ONLY YES
 )
-
+CPMAddPackage("gh:SFML/SFML#2.6.2") #
 
 if(pn532_ADDED)
 add_library(pn532 STATIC  ${pn532_SOURCE_DIR}/pn532.c
@@ -43,5 +43,6 @@ target_link_libraries(HishBox PRIVATE
                                         pn532
                                         spdlog
                                         fmt
+                                        sfml-audio
                                         -lwiringPi)
 target_include_directories(HishBox PRIVATE src)
