@@ -76,6 +76,14 @@ std::string get_matching_path(std::string_view directory, std::string_view patte
 }
 
 int main(int argc, char** argv) {
+    //TEST
+    MediaPlayer p;
+    p.start_song("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
+    while(true)
+    {
+
+    }
+    //FIN TEST
 	std::expected<NfcReader, std::string> try_reader = NfcReader::try_init();
 	if(try_reader.has_value() == false)
 	{
