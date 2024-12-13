@@ -22,6 +22,19 @@ CPMAddPackage(
     GIT_TAG f25b40151f7940af89a75a95e11eb33e4b14581b
     DOWNLOAD_ONLY YES
 )
+# This needs 
+#sudo apt install \
+#libxrandr-dev \
+#libxcursor-dev \
+#libudev-dev \
+#libopenal-dev \
+#libflac-dev \
+#libvorbis-dev \
+#libgl1-mesa-dev \
+#libegl1-mesa-dev \
+#libdrm-dev \
+#libgbm-dev
+
 CPMAddPackage("gh:SFML/SFML#2.6.2") #
 
 if(pn532_ADDED)
