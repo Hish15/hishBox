@@ -11,8 +11,6 @@ RUN apt-get install -y \
         git \
         /tmp/wiringpi_3.10_arm64.deb
 
-ADD ./src ./src
-ADD CMakeLists.txt ./
 
 #Dependencies for SFML 
 RUN apt install -y \
@@ -25,12 +23,6 @@ RUN apt install -y \
         libgl1-mesa-dev \
         libegl1-mesa-dev \
         libdrm-dev \
-        libgbm-dev
+        libgbm-dev \
+        x11-xserver-utils
 
-RUN cmake -Bbuild . && cmake --build build
-
-#Test
-RUN apt-get install -y x11-xserver-utils
-ADD youtube youtube
-
-ENTRYPOINT ["./build/HishBox"]
