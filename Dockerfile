@@ -32,3 +32,5 @@ RUN cmake -Bbuild . && cmake --build build
 #Test
 RUN apt-get install -y x11-xserver-utils
 ADD youtube youtube
+
+ENTRYPOINT ["./build/HishBox"]
