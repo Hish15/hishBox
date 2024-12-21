@@ -37,3 +37,12 @@ void MediaPlayer::start_song(std::string path_to_file)
         }
     });
 }
+
+void MediaPlayer::stop()
+{
+    if(m_play_thread.request_stop())
+    {
+        m_play_thread.join();
+    }
+}
+
