@@ -10,6 +10,7 @@ extern "C"{
 #include <nfc_reader.hpp>
 #include <nfc_frame.hpp>
 #include <media_player.hpp>
+#include "gpio_handler.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -76,53 +77,12 @@ std::string get_matching_path(std::string_view directory, std::string_view patte
 
 }
 
-#define PIN_BUTTON 18
-
 MediaPlayer media_player;
-
-#include <functional>
-struct InitGpio
-{
-	int pin;
-	int mode;
-	enum class pull {off = 0, up, down};
-	pull pull;
-	std::function<void(void)> callback;
-};
-
-class GpioHandler
-{
-public:
-	GpioHandler(std::initializer_list<InitGpio> list_gpio)
-	{
-		for(const auto& gpio : list_gpio)
-		{
-			wiringPiSetupGpio();
-			pinMode(gpio.pin, gpio.mode);
-			if (gpio.mode == INPUT)
-			{
-				switch(gpio.pull)
-				{
-					case InitGpio::pull::off:
-						pullUpDnControl(gpio.pin, PUD_OFF);
-						break;
-					case InitGpio::pull::up:
-						pullUpDnControl(gpio.pin, PUD_UP);
-						break;
-					case InitGpio::pull::down:
-						pullUpDnControl(gpio.pin, PUD_DOWN);
-						break;
-				}
-			}
-			wiringPiISR(gpio.pin, INT_EDGE_FALLING, gpio.callback.target<void(void)>());
-		}
-	}
-};
 
 int main(int argc, char** argv) {
 
 	GpioHandler gpio_handler({
-		{PIN_BUTTON, INPUT, InitGpio::pull::up, [](){media_player.next();}}
+		{18, INPUT, InitGpio::pull::up, [](){media_player.next();}}
 	});
 
 	std::vector<std::string> list_songs;
@@ -130,18 +90,8 @@ int main(int argc, char** argv) {
 	list_songs.push_back("./youtube/We Don't Talk About Bruno (From ＂Encanto＂⧸Lyric Video) [-IFD4ozm1DA].wav");
     //TEST
     media_player.load_list(list_songs);
-    using namespace std::chrono_literals;
 
-	while(1)
-	{
-		if(digitalRead(PIN_BUTTON) == LOW)
-		{
-			media_player.next();
-			std::this_thread::sleep_for(1s);
-		}
-	}
-	media_player.play();
-    
+    using namespace std::chrono_literals;
 	std::this_thread::sleep_for(10s);
     media_player.pause();
 	std::this_thread::sleep_for(5s);
