@@ -6,6 +6,9 @@ extern "C"
 
 #include <initializer_list>
 #include <functional>
+#include <thread>
+#include <chrono>
+#include <vector>
 
 /// @brief Class to handle GPIOs
 /// This class is used to handle GPIOs with a callback
@@ -21,6 +24,9 @@ struct InitGpio
 
 class GpioHandler
 {
+private:
+    std::vector<std::jthread> m_threads;
+
 public:
     //TODO: Add a destructor to clean up the GPIOs
     /// @brief Constructor
@@ -51,7 +57,22 @@ public:
                         isr_edge = INT_EDGE_RISING;
 						break;
 				}
-                wiringPiISR(gpio.pin, isr_edge, gpio.callback.target<void(void)>());
+                m_threads.emplace_back([gpio, isr_edge](std::stop_token st)
+                {
+                    using namespace std::chrono_literals;
+                    while(!st.stop_requested())
+                    {
+                        if(digitalRead(gpio.pin) == LOW)
+                        {
+                            while(digitalRead(gpio.pin) == LOW)
+                            {
+                                std::this_thread::sleep_for(500ms);
+                            }
+                            gpio.callback();
+                            std::this_thread::sleep_for(500ms);
+                        }
+                    }
+                });
 			}
 		}
 	}
