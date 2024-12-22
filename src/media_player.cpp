@@ -78,4 +78,27 @@ void MediaPlayer::stop()
         m_play_thread.join();
     }
 }
+void MediaPlayer::next()
+{
+    stop();
+    m_current_song++;
+    if(m_current_song >= m_list_songs.size())
+    {
+        m_current_song = 0;
+    }
+    start_song(m_list_songs[m_current_song]);
+}
+void MediaPlayer::previous()
+{
+    stop();
+    if(m_current_song == 0)
+    {
+        m_current_song = m_list_songs.size() - 1;
+    }
+    else
+    {
+        m_current_song--;
+    }
+    start_song(m_list_songs[m_current_song]);
+}
 

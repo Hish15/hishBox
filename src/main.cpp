@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 	std::this_thread::sleep_for(10s);
     media_player.pause();
 	std::this_thread::sleep_for(5s);
-	media_player.play();
+	media_player.next();
 	std::this_thread::sleep_for(10s);
     //FIN TEST
 	std::expected<NfcReader, std::string> try_reader = NfcReader::try_init();

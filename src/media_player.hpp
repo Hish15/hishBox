@@ -19,4 +19,6 @@ public:
     void pause();
     void play();
     void stop();
+    void next();
+    void previous();
 };
