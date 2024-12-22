@@ -82,7 +82,7 @@ MediaPlayer media_player;
 int main(int argc, char** argv) {
 
 	GpioHandler gpio_handler({
-		{18, INPUT, InitGpio::pull::up, [](){media_player.next();}}
+		{18, INPUT, InitGpio::pull::up, [&](){std::cout << "BUT\n"; media_player.next();}}
 	});
 
 	std::vector<std::string> list_songs;
