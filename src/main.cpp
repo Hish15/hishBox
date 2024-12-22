@@ -80,11 +80,18 @@ MediaPlayer media_player;
 
 int main(int argc, char** argv) {
 
+	std::vector<std::string> list_songs;
+	list_songs.push_back("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
+	list_songs.push_back("./youtube/We Don't Talk About Bruno (From ＂Encanto＂⧸Lyric Video) [-IFD4ozm1DA].wav");
     //TEST
-    media_player.start_song("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
+    media_player.load_list(list_songs);
     using namespace std::chrono_literals;
-    std::this_thread::sleep_for(5s);
-    media_player.stop();
+    
+	std::this_thread::sleep_for(10s);
+    media_player.pause();
+	std::this_thread::sleep_for(5s);
+	media_player.play();
+	std::this_thread::sleep_for(10s);
     //FIN TEST
 	std::expected<NfcReader, std::string> try_reader = NfcReader::try_init();
 	if(try_reader.has_value() == false)
@@ -113,7 +120,8 @@ int main(int argc, char** argv) {
 		}
 		const auto matching_path2 = get_matching_path("youtube", id);
 		spdlog::info(matching_path2);
-        media_player.start_song(matching_path2);
+		std::array<std::string, 1> song = {matching_path2};
+        media_player.load_list(song);
 	}
 	else
 	{

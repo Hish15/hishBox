@@ -52,6 +52,16 @@ void MediaPlayer::start_song(std::string path_to_file)
     });
 }
 
+void MediaPlayer::load_list(std::span<std::string> list_songs)
+{
+    if(list_songs.size() == 0)
+    {
+        return;
+    }
+    m_list_songs = std::vector<std::string>(list_songs.begin(), list_songs.end());
+    start_song(m_list_songs[m_current_song]);
+}
+
 void MediaPlayer::pause()
 {
     m_pause = true;
