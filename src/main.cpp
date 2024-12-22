@@ -15,6 +15,7 @@ extern "C"{
 
 #include <algorithm>
 #include <cstring>
+#include <chrono>
 #include <iostream>
 #include <optional>
 #include <regex>
@@ -75,14 +76,22 @@ std::string get_matching_path(std::string_view directory, std::string_view patte
 
 }
 
-int main(int argc, char** argv) {
-    //TEST
-    MediaPlayer p;
-    p.start_song("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
-    while(true)
-    {
+MediaPlayer media_player;
 
-    }
+int main(int argc, char** argv) {
+
+	std::vector<std::string> list_songs;
+	list_songs.push_back("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
+	list_songs.push_back("./youtube/We Don't Talk About Bruno (From ＂Encanto＂⧸Lyric Video) [-IFD4ozm1DA].wav");
+    //TEST
+    media_player.load_list(list_songs);
+    using namespace std::chrono_literals;
+    
+	std::this_thread::sleep_for(10s);
+    media_player.pause();
+	std::this_thread::sleep_for(5s);
+	media_player.next();
+	std::this_thread::sleep_for(10s);
     //FIN TEST
 	std::expected<NfcReader, std::string> try_reader = NfcReader::try_init();
 	if(try_reader.has_value() == false)
@@ -99,7 +108,7 @@ int main(int argc, char** argv) {
 
 	std::string url(payload.begin(), payload.end());
 	const auto id = get_youtube_id(url);
-    MediaPlayer player;
+    MediaPlayer media_player;
 	if(id.empty() == false)
 	{
 		const auto matching_path = get_matching_path("youtube",id);
@@ -111,7 +120,8 @@ int main(int argc, char** argv) {
 		}
 		const auto matching_path2 = get_matching_path("youtube", id);
 		spdlog::info(matching_path2);
-        player.start_song(matching_path2);
+		std::array<std::string, 1> song = {matching_path2};
+        media_player.load_list(song);
 	}
 	else
 	{
