@@ -15,7 +15,6 @@ extern "C"{
 
 #include <algorithm>
 #include <cstring>
-#include <csignal>
 #include <chrono>
 #include <iostream>
 #include <optional>
@@ -80,9 +79,6 @@ std::string get_matching_path(std::string_view directory, std::string_view patte
 MediaPlayer media_player;
 
 int main(int argc, char** argv) {
-
-    // Install a signal handler
-    std::signal(SIGINT, signal_handler);
 
     //TEST
     media_player.start_song("./youtube/Nicki Minaj - Anaconda [LDZX4ooRsWs].wav");
