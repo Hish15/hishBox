@@ -18,6 +18,7 @@ public:
     void load_list(std::span<std::string> list_songs);
     void pause();
     void play();
+    void toggle_pause_play();
     void stop();
     void next();
     void previous();

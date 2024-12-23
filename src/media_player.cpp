@@ -67,6 +67,11 @@ void MediaPlayer::play()
     m_pause = false;
 }
 
+void MediaPlayer::toggle_pause_play()
+{
+    m_pause.exchange(!m_pause);
+}
+
 void MediaPlayer::stop()
 {
     if(m_play_thread.request_stop())

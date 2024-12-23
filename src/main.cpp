@@ -82,6 +82,7 @@ MediaPlayer media_player;
 int main(int argc, char** argv) {
 
 	GpioHandler gpio_handler({
+		{17, INPUT, InitGpio::pull::up, [&](){std::cout << "PAUSE\n"; media_player.toggle_pause_play();}},
 		{18, INPUT, InitGpio::pull::up, [&](){std::cout << "BUT\n"; media_player.next();}}
 	});
 
