@@ -46,15 +46,12 @@ public:
 				{
 					case InitGpio::pull::off:
 						pullUpDnControl(gpio.pin, PUD_OFF);
-                        isr_edge = INT_EDGE_BOTH;
 						break;
 					case InitGpio::pull::up:
 						pullUpDnControl(gpio.pin, PUD_UP);
-                        isr_edge = INT_EDGE_FALLING;
 						break;
 					case InitGpio::pull::down:
 						pullUpDnControl(gpio.pin, PUD_DOWN);
-                        isr_edge = INT_EDGE_RISING;
 						break;
 				}
                 m_threads.emplace_back([gpio, isr_edge](std::stop_token st)
