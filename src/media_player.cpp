@@ -12,6 +12,7 @@ void MediaPlayer::start_song(std::string path_to_file)
     // Play the sound
     //m_play_thread.request_stop();
     //m_play_thread.join(); //Wait for the thread to stop
+    stop();
     m_play_thread = std::jthread([path_to_file, this](std::stop_token stoken)
     {
         sf::Music music;
