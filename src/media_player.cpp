@@ -3,30 +3,25 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
+#include <chrono>
+#include <thread>
+
 void MediaPlayer::start_song(std::string path_to_file)
 {
 
     // Play the sound
     //m_play_thread.request_stop();
     //m_play_thread.join(); //Wait for the thread to stop
+    stop();
     m_play_thread = std::jthread([path_to_file, this](std::stop_token stoken)
     {
-        // Declare a new sound buffer
-        sf::SoundBuffer buffer;
-
-        // Load it from a file
-        if (!buffer.loadFromFile(path_to_file))
-        {
-            // error...
-        }
-
-        // Create a sound source and bind it to the buffer
-        sf::Sound sound;
-        sound.setBuffer(buffer);
-        sound.play();
+        sf::Music music;
+        if (!music.openFromFile(path_to_file))
+            return; // error
+        music.play();
         // Loop while the sound is playing
         bool old_pause = this->m_pause;
-        while (sound.getStatus() == sf::Sound::Status::Playing || sound.getStatus() == sf::Sound::Status::Paused)
+        while (music.getStatus() == sf::Sound::Status::Playing || music.getStatus() == sf::Sound::Status::Paused)
         {
 
             if(stoken.stop_requested())
@@ -38,15 +33,16 @@ void MediaPlayer::start_song(std::string path_to_file)
                 old_pause = !old_pause;
                 if(old_pause)
                 {
-                    sound.pause();
+                    music.pause();
                 }
                 else
                 {
-                    sound.play();
+                    music.play();
                 }
             }
             // Leave some CPU time for other processes
-            sf::sleep(sf::milliseconds(100));
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(100ms);
         }
 
     });
